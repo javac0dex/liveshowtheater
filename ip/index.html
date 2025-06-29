@@ -473,6 +473,134 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        /* Multiple Session Warning Modal */
+        .session-warning-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .session-warning-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .session-warning-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff9500, #ff6b00);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .session-warning-title {
+            color: #ff6b00;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .session-warning-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .session-warning-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .warning-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .warning-btn-primary {
+            background: linear-gradient(45deg, #ff6b00, #ff9500);
+            color: white;
+        }
+
+        .warning-btn-primary:hover {
+            background: linear-gradient(45deg, #ff5500, #ff8000);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);
+        }
+
+        .warning-btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .warning-btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .session-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .countdown {
+            font-weight: bold;
+            color: #ff6b00;
+        }
     </style>
 </head>
 <body>
@@ -534,6 +662,38 @@
             <i class="fab fa-whatsapp"></i>
             Hubungi Support
         </a>
+    </div>
+
+    <!-- Multiple Session Warning Modal -->
+    <div class="session-warning-overlay" id="sessionWarningOverlay">
+        <div class="session-warning-modal">
+            <div class="session-warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1 class="session-warning-title">Sesi Ganda Terdeteksi!</h1>
+            <p class="session-warning-message">
+                Streaming ini sudah dibuka di tab/window lain. Untuk melanjutkan menonton di sini, 
+                Anda harus menutup sesi sebelumnya.
+            </p>
+            <div class="session-info" id="sessionInfo">
+                <strong>Sesi Aktif:</strong><br>
+                <span id="activeSessionInfo"></span>
+            </div>
+            <p class="session-warning-message">
+                Sesi lain akan otomatis ditutup dalam <span class="countdown" id="countdown">10</span> detik, 
+                atau Anda dapat memilih tindakan di bawah ini.
+            </p>
+            <div class="session-warning-buttons">
+                <button class="warning-btn warning-btn-primary" id="forceCloseBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Tutup Sesi Lain
+                </button>
+                <button class="warning-btn warning-btn-secondary" id="stayHereBtn">
+                    <i class="fas fa-desktop"></i>
+                    Tetap Di Sini
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Streaming Content -->
@@ -618,13 +778,24 @@
     </div>
 
     <script>
-        // Access Control System
+        // Access Control System with Multiple Session Detection
         class AccessControl {
             constructor() {
                 this.storageKey = 'jkt48_streaming_access';
                 this.sessionKey = 'jkt48_streaming_session';
+                this.heartbeatKey = 'jkt48_streaming_heartbeat';
+                this.activeSessionKey = 'jkt48_active_session';
                 this.userIP = null;
                 this.deviceFingerprint = null;
+                this.sessionId = this.generateSessionId();
+                this.heartbeatInterval = null;
+                this.countdownInterval = null;
+                this.isStreamingActive = false;
+            }
+
+            // Generate unique session ID
+            generateSessionId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
             }
 
             // Generate device fingerprint
@@ -634,7 +805,7 @@
                 ctx.textBaseline = 'top';
                 ctx.font = '14px Arial';
                 ctx.fillText('Device fingerprint', 2, 2);
-                
+        
                 const fingerprint = {
                     userAgent: navigator.userAgent,
                     language: navigator.language,
@@ -646,10 +817,9 @@
                     timestamp: Date.now()
                 };
 
-                // Create hash from fingerprint
                 const fingerprintString = JSON.stringify(fingerprint);
                 const hash = await this.hashString(fingerprintString);
-                return hash.substring(0, 32); // Use first 32 characters
+                return hash.substring(0, 32);
             }
 
             // Get WebGL fingerprint
@@ -658,7 +828,7 @@
                     const canvas = document.createElement('canvas');
                     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
                     if (!gl) return 'no-webgl';
-                    
+            
                     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                     return debugInfo ? 
                         gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 
@@ -686,9 +856,172 @@
                     return data.ip;
                 } catch (error) {
                     console.warn('Could not fetch IP:', error);
-                    // Fallback: use a combination of other identifiers
                     return await this.hashString(navigator.userAgent + navigator.language + screen.width);
                 }
+            }
+
+            // Start heartbeat to monitor active sessions
+            startHeartbeat() {
+                this.heartbeatInterval = setInterval(() => {
+                    if (this.isStreamingActive) {
+                        const heartbeatData = {
+                            sessionId: this.sessionId,
+                            timestamp: Date.now(),
+                            fingerprint: this.deviceFingerprint,
+                            ip: this.userIP,
+                            userAgent: navigator.userAgent.substring(0, 50)
+                        };
+                        localStorage.setItem(this.heartbeatKey, JSON.stringify(heartbeatData));
+                    }
+                }, 2000); // Update every 2 seconds
+            }
+
+            // Stop heartbeat
+            stopHeartbeat() {
+                if (this.heartbeatInterval) {
+                    clearInterval(this.heartbeatInterval);
+                    this.heartbeatInterval = null;
+                }
+                localStorage.removeItem(this.heartbeatKey);
+            }
+
+            // Check for multiple sessions
+            checkMultipleSessions() {
+                const currentHeartbeat = localStorage.getItem(this.heartbeatKey);
+                if (!currentHeartbeat) return false;
+
+                try {
+                    const heartbeatData = JSON.parse(currentHeartbeat);
+                    const timeDiff = Date.now() - heartbeatData.timestamp;
+            
+                    // If heartbeat is recent (less than 5 seconds) and from different session
+                    if (timeDiff < 5000 && heartbeatData.sessionId !== this.sessionId) {
+                        return heartbeatData;
+                    }
+                } catch (error) {
+                    console.error('Error checking multiple sessions:', error);
+                }
+        
+                return false;
+            }
+
+            // Show multiple session warning
+            showMultipleSessionWarning(activeSession) {
+                const overlay = document.getElementById('sessionWarningOverlay');
+                const activeSessionInfo = document.getElementById('activeSessionInfo');
+                const countdown = document.getElementById('countdown');
+        
+                // Show session info
+                activeSessionInfo.innerHTML = `
+                    Browser: ${activeSession.userAgent}<br>
+                    IP: ${activeSession.ip}<br>
+                    Waktu: ${new Date(activeSession.timestamp).toLocaleTimeString('id-ID')}
+                `;
+        
+                overlay.style.display = 'block';
+        
+                // Start countdown
+                let timeLeft = 10;
+                this.countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    countdown.textContent = timeLeft;
+            
+                    if (timeLeft <= 0) {
+                        this.forceCloseOtherSession();
+                    }
+                }, 1000);
+            }
+
+            // Hide multiple session warning
+            hideMultipleSessionWarning() {
+                const overlay = document.getElementById('sessionWarningOverlay');
+                overlay.style.display = 'none';
+        
+                if (this.countdownInterval) {
+                    clearInterval(this.countdownInterval);
+                    this.countdownInterval = null;
+                }
+            }
+
+            // Force close other session
+            forceCloseOtherSession() {
+                // Set force close flag
+                localStorage.setItem('jkt48_force_close', this.sessionId);
+        
+                // Clear the warning and continue with current session
+                this.hideMultipleSessionWarning();
+                this.isStreamingActive = true;
+                this.startHeartbeat();
+        
+                // Remove force close flag after 2 seconds
+                setTimeout(() => {
+                    localStorage.removeItem('jkt48_force_close');
+                }, 2000);
+            }
+
+            // Check if session should be closed
+            checkForceClose() {
+                const forceClose = localStorage.getItem('jkt48_force_close');
+                if (forceClose && forceClose !== this.sessionId) {
+                    // This session should be closed
+                    this.showForceCloseMessage();
+                    return true;
+                }
+                return false;
+            }
+
+            // Show force close message
+            showForceCloseMessage() {
+                // Stop streaming
+                this.isStreamingActive = false;
+                this.stopHeartbeat();
+        
+                // Hide streaming content
+                document.getElementById('streamingContainer').style.display = 'none';
+        
+                // Show message
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10001;
+                    font-family: 'Segoe UI', sans-serif;
+                `;
+        
+                overlay.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 60px; margin-bottom: 20px;">⚠️</div>
+                        <h2 style="font-size: 24px; margin-bottom: 15px;">Sesi Ditutup</h2>
+                        <p style="font-size: 16px; margin-bottom: 20px;">
+                            Streaming telah dibuka di tab/window lain.<br>
+                            Halaman ini akan ditutup otomatis.
+                        </p>
+                        <button onclick="window.close()" style="
+                            padding: 12px 24px;
+                            background: #ff6b00;
+                            color: white;
+                            border: none;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            cursor: pointer;
+                        ">Tutup Halaman</button>
+                    </div>
+                `;
+        
+                document.body.appendChild(overlay);
+        
+                // Auto close after 5 seconds
+                setTimeout(() => {
+                    window.close();
+                }, 5000);
             }
 
             // Check if access is allowed
@@ -697,17 +1030,15 @@
                 this.deviceFingerprint = await this.generateFingerprint();
 
                 const storedAccess = localStorage.getItem(this.storageKey);
-                const currentSession = sessionStorage.getItem(this.sessionKey);
 
                 if (!storedAccess) {
-                    // First time access - allow and store
                     return true;
                 }
 
                 try {
                     const accessData = JSON.parse(storedAccess);
                     const currentTime = Date.now();
-                    
+            
                     // Check if stored access is expired (24 hours)
                     if (currentTime - accessData.timestamp > 24 * 60 * 60 * 1000) {
                         localStorage.removeItem(this.storageKey);
@@ -717,11 +1048,6 @@
                     // Check if same device and IP
                     if (accessData.fingerprint === this.deviceFingerprint && 
                         accessData.ip === this.userIP) {
-                        return true;
-                    }
-
-                    // Check if there's an active session from same device
-                    if (currentSession && accessData.fingerprint === this.deviceFingerprint) {
                         return true;
                     }
 
@@ -742,11 +1068,10 @@
                     fingerprint: this.deviceFingerprint,
                     ip: this.userIP,
                     timestamp: Date.now(),
-                    userAgent: navigator.userAgent.substring(0, 100) // Store partial user agent
+                    userAgent: navigator.userAgent.substring(0, 100)
                 };
 
                 localStorage.setItem(this.storageKey, JSON.stringify(accessData));
-                sessionStorage.setItem(this.sessionKey, 'active');
             }
 
             // Show access denied message
@@ -755,7 +1080,6 @@
                 document.getElementById('streamingContainer').style.display = 'none';
                 document.getElementById('accessDeniedContainer').style.display = 'block';
 
-                // Show registered device info
                 const registeredInfo = `
                     IP: ${storedData.ip}<br>
                     Browser: ${storedData.userAgent}<br>
@@ -764,10 +1088,34 @@
                 document.getElementById('registeredDeviceInfo').innerHTML = registeredInfo;
             }
 
+            // Start streaming session
+            startStreamingSession() {
+                this.isStreamingActive = true;
+                this.startHeartbeat();
+        
+                // Monitor for multiple sessions
+                setInterval(() => {
+                    if (this.isStreamingActive) {
+                        // Check if this session should be closed
+                        if (this.checkForceClose()) {
+                            return;
+                        }
+                
+                        // Check for other active sessions
+                        const otherSession = this.checkMultipleSessions();
+                        if (otherSession) {
+                            this.showMultipleSessionWarning(otherSession);
+                        }
+                    }
+                }, 3000);
+            }
+
             // Reset access (for admin use)
             resetAccess() {
                 localStorage.removeItem(this.storageKey);
-                sessionStorage.removeItem(this.sessionKey);
+                localStorage.removeItem(this.heartbeatKey);
+                localStorage.removeItem('jkt48_force_close');
+                this.stopHeartbeat();
                 location.reload();
             }
         }
@@ -804,56 +1152,57 @@
         // Login form handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+    
             const passwordInput = document.getElementById('passwordInput');
             const loginBtn = document.getElementById('loginBtn');
             const btnText = document.getElementById('btnText');
             const loadingSpinner = document.getElementById('loadingSpinner');
             const errorMessage = document.getElementById('errorMessage');
-            
+    
             // Show loading
             btnText.style.display = 'none';
             loadingSpinner.style.display = 'inline-block';
             loginBtn.disabled = true;
-            
+    
             // Simulate loading delay
             setTimeout(async () => {
                 const enteredPassword = passwordInput.value;
                 const hashedPassword = await hashPassword(enteredPassword);
-                
+        
                 // Valid password hashes
                 const validHashes = [
-                    '4bf4848e86e231df763a97cbf9a7c8df1788aef8fc46c93e282588d3b3a35e33', // pass
-                    '891094cb1dc2dc43c31d739f9edd78c8606843bd13c130c670a96606338a61a7', // pass
-                    'b6b4355bd3ced4d2730e6e3c1599fcbb67582921eea32a89ba9b4fc569a32410', // pass
-                    'b19df80bb1142ae243cb61f1abf01c03097ed3897b7e36cca14c07232fb57cc2'  // pass
+                    '4bf4848e86e231df763a97cbf9a7c8df1788aef8fc46c93e282588d3b3a35e33',
+                    '891094cb1dc2dc43c31d739f9edd78c8606843bd13c130c670a96606338a61a7',
+                    'b6b4355bd3ced4d2730e6e3c1599fcbb67582921eea32a89ba9b4fc569a32410',
+                    'b19df80bb1142ae243cb61f1abf01c03097ed3897b7e36cca14c07232fb57cc2'
                 ];
-                
+        
                 if (validHashes.includes(hashedPassword)) {
                     // Check access control
                     const accessAllowed = await accessControl.checkAccess();
-                    
+            
                     if (accessAllowed) {
                         // Store access and show streaming
                         accessControl.storeAccess();
                         document.getElementById('loginContainer').style.display = 'none';
                         document.getElementById('streamingContainer').style.display = 'block';
                         initializeVideoPlayer();
+                
+                        // Start streaming session monitoring
+                        accessControl.startStreamingSession();
                     }
-                    // If access denied, the checkAccess method will handle showing the denied message
                 } else {
                     // Wrong password
                     errorMessage.classList.add('show');
                     passwordInput.style.borderColor = '#ff4757';
                     passwordInput.value = '';
-                    
-                    // Reset error state after 3 seconds
+            
                     setTimeout(() => {
                         errorMessage.classList.remove('show');
                         passwordInput.style.borderColor = '#e1e5e9';
                     }, 3000);
                 }
-                
+        
                 // Hide loading
                 btnText.style.display = 'inline';
                 loadingSpinner.style.display = 'none';
@@ -871,7 +1220,6 @@
                 preload: 'auto'
             });
 
-            // Initialize HLS
             if (Hls.isSupported()) {
                 const hls = new Hls({
                     enableWorker: true,
@@ -880,7 +1228,7 @@
                 });
                 hls.loadSource('https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a46405350597f574a&_=m3u8');
                 hls.attachMedia(player.tech().el());
-                
+        
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     console.log('Stream loaded successfully');
                 });
@@ -906,37 +1254,38 @@
             player.load();
         }
 
-        // Check access on page load
-        document.addEventListener('DOMContentLoaded', async function() {
+        // Multiple session warning event handlers
+        document.addEventListener('DOMContentLoaded', function() {
             createParticles();
-            
-            // Check if user already has valid access
-            const hasValidAccess = await accessControl.checkAccess();
-            if (hasValidAccess) {
-                const storedAccess = localStorage.getItem(accessControl.storageKey);
-                if (storedAccess) {
-                    // User has valid stored access, skip login
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.getElementById('streamingContainer').style.display = 'block';
-                    initializeVideoPlayer();
-                }
-            }
+    
+            // Force close button
+            document.getElementById('forceCloseBtn').addEventListener('click', function() {
+                accessControl.forceCloseOtherSession();
+            });
+    
+            // Stay here button
+            document.getElementById('stayHereBtn').addEventListener('click', function() {
+                accessControl.hideMultipleSessionWarning();
+                // This session will be closed by the other session
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
+            });
         });
 
-        // Monitor for multiple tabs/windows
+        // Monitor storage changes for session management
         window.addEventListener('storage', function(e) {
-            if (e.key === accessControl.sessionKey && e.newValue !== e.oldValue) {
-                // Another tab/window is trying to access
-                if (document.getElementById('streamingContainer').style.display === 'block') {
-                    alert('Streaming telah dibuka di tab/window lain. Halaman ini akan ditutup.');
-                    window.close();
+            if (e.key === 'jkt48_force_close' && e.newValue !== accessControl.sessionId) {
+                // Another session is forcing this one to close
+                if (accessControl.isStreamingActive) {
+                    accessControl.showForceCloseMessage();
                 }
             }
         });
 
         // Clear session on page unload
         window.addEventListener('beforeunload', function() {
-            sessionStorage.removeItem(accessControl.sessionKey);
+            accessControl.stopHeartbeat();
         });
 
         // Prevent right-click context menu
@@ -953,7 +1302,7 @@
             }
         });
 
-        // Admin function to reset access (can be called from console)
+        // Admin function to reset access
         window.resetStreamingAccess = function() {
             accessControl.resetAccess();
         };
