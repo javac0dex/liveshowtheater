@@ -547,6 +547,7 @@
             </p>
         </div>
     </div>
+
     <script>
         // Create animated background
         function createParticles() {
@@ -563,6 +564,7 @@
                 bgAnimation.appendChild(particle);
             }
         }
+
         // Simple hash function for password verification
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -572,6 +574,7 @@
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('');
         }
+
         // Login form handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -592,10 +595,15 @@
                 const enteredPassword = passwordInput.value;
                 const hashedPassword = await hashPassword(enteredPassword);
                 
-                // Check password (comparing with hash of "flora123")
-                const correctHash = '4bf4848e86e231df763a97cbf9a7c8df1788aef8fc46c93e282588d3b3a35e33';
+                // Valid password hashes
+                const validHashes = [
+                    '4bf4848e86e231df763a97cbf9a7c8df1788aef8fc46c93e282588d3b3a35e33', // flora123
+                    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', // fpi123
+                    '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', // genz123
+                    'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f'  // kode123
+                ];
                 
-                if (hashedPassword === correctHash) {
+                if (validHashes.includes(hashedPassword)) {
                     // Correct password
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('streamingContainer').style.display = 'block';
@@ -619,6 +627,7 @@
                 loginBtn.disabled = false;
             }, 1500);
         });
+
         // Initialize video player
         function initializeVideoPlayer() {
             const player = videojs('video', {
@@ -628,6 +637,7 @@
                 controls: true,
                 preload: 'auto'
             });
+
             // Initialize HLS
             if (Hls.isSupported()) {
                 const hls = new Hls({
@@ -643,6 +653,7 @@
                 });
             }
         }
+
         // Utility functions
         function toggleFullscreen() {
             const player = videojs('video');
@@ -652,6 +663,7 @@
                 player.requestFullscreen();
             }
         }
+
         function refreshStream() {
             const player = videojs('video');
             player.src({
@@ -660,14 +672,17 @@
             });
             player.load();
         }
+
         // Initialize particles on page load
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
         });
+
         // Prevent right-click context menu
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
+
         // Disable F12, Ctrl+Shift+I, Ctrl+U
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F12' || 
