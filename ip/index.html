@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKT48 Live Streaming - Premium Access</title>
+    
+    <!-- Link ke Video.js dan HLS.js -->
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/7.10.2/video.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        /* Login Container */
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .login-title {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .login-show-title {
+            color: #444;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .login-show-info {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        .login-show-date {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .login-show-time {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .login-subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 2px solid #e1e5e9;
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: scale(1.02);
+        }
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 18px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        .error-message {
+            color: #ff4757;
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .error-message.show {
+            opacity: 1;
+        }
+        /* Access Denied Container */
+        .access-denied-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        .access-denied-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+        }
+        .access-denied-title {
+            color: #ff4757;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .access-denied-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .device-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        /* Streaming Container */
+        .streaming-container {
+            display: none;
+            max-width: 1400px;
+            width: 95%;
+            margin: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .streaming-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .streaming-title {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .show-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .show-datetime {
+            font-size: 20px;
+            color: #4ecdc4;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: fit-content;
+            margin: 0 auto 20px;
+        }
+        .streaming-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            font-weight: 300;
+        }
+        .video-wrapper {
+            position: relative;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+        .video-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            border-radius: 22px;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        #video {
+            width: 100%;
+            height: auto;
+            min-height: 400px;
+        }
+        .controls-panel {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .whatsapp-btn {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+        }
+        .whatsapp-btn:hover {
+            background: linear-gradient(45deg, #128C7E, #075E54);
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        /* Lineup Section */
+        .lineup-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        .lineup-title {
+            color: #4ecdc4;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .lineup-members {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        .member-name {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            margin: 4px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .member-name:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .footer-info {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .streaming-title {
+                font-size: 28px;
+            }
+            
+            .show-title {
+                font-size: 22px;
+            }
+            
+            .show-datetime {
+                font-size: 16px;
+                flex-direction: column;
+                gap: 5px;
+                padding: 15px 20px;
+            }
+            
+            .login-container, .access-denied-container {
+                padding: 30px 20px;
+            }
+            
+            .login-show-date, .login-show-time {
+                font-size: 14px;
+            }
+            
+            .controls-panel {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .control-btn {
+                width: 200px;
+                justify-content: center;
+            }
+            .lineup-members {
+                font-size: 14px;
+            }
+            .member-name {
+                font-size: 13px;
+                padding: 4px 8px;
+                margin: 2px;
+            }
+        }
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+    
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="logo">
+            <i class="fas fa-play"></i>
+        </div>
+        <h1 class="login-title">JKT48 Premium</h1>
+        <h2 class="login-show-title">Cara Meminum Ramune</h2>
+        
+        <div class="login-show-info">
+            <div class="login-show-date">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Minggu, 29 Jun 2025</span>
+            </div>
+            <div class="login-show-time">
+                <i class="fas fa-clock"></i>
+                <span>14:00 WIB</span>
+            </div>
+        </div>
+        
+        <p class="login-subtitle">Masukkan kata sandi untuk mengakses streaming eksklusif</p>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" class="input-field" id="passwordInput" placeholder="Masukkan kata sandi" required>
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">
+                <span id="btnText">Masuk ke Streaming</span>
+                <span class="loading" id="loadingSpinner" style="display: none;"></span>
+            </button>
+            <div class="error-message" id="errorMessage">Kata sandi salah! Silakan coba lagi.</div>
+        </form>
+    </div>
+
+    <!-- Access Denied Container -->
+    <div class="access-denied-container" id="accessDeniedContainer">
+        <div class="access-denied-icon">
+            <i class="fas fa-ban"></i>
+        </div>
+        <h1 class="access-denied-title">Akses Ditolak</h1>
+        <p class="access-denied-message">
+            Streaming ini hanya dapat diakses dari satu perangkat dan satu lokasi IP. 
+            Akses telah terdaftar pada perangkat lain.
+        </p>
+        <div class="device-info" id="deviceInfo">
+            <strong>Informasi Perangkat Terdaftar:</strong><br>
+            <span id="registeredDeviceInfo"></span>
+        </div>
+        <p class="access-denied-message">
+            Jika Anda merasa ini adalah kesalahan, silakan hubungi support untuk reset akses.
+        </p>
+        <a href="https://wa.me/628970400899" target="_blank" class="control-btn whatsapp-btn" style="display: inline-flex; margin-top: 20px;">
+            <i class="fab fa-whatsapp"></i>
+            Hubungi Support
+        </a>
+    </div>
+
+    <!-- Streaming Content -->
+    <div class="streaming-container" id="streamingContainer">
+        <div class="streaming-header">
+            <h1 class="streaming-title">JKT48 LIVE STREAMING</h1>
+            <h2 class="show-title">Cara Meminum Ramune</h2>
+            <div class="show-datetime">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Minggu, 29 Jun 2025</span>
+                <i class="fas fa-clock"></i>
+                <span>14:00 WIB</span>
+            </div>
+            <p class="streaming-subtitle">Theater Show Backup Streaming - Premium Access</p>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Live Streaming Aktif</span>
+            </div>
+        </div>
+        <div class="video-wrapper">
+            <video 
+                id="video" 
+                class="video-js vjs-default-skin" 
+                controls 
+                autoplay 
+                data-setup='{"fluid": true, "responsive": true}'>
+                <source src="https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a46405350597f574a&_=m3u8" type="application/x-mpegURL" />
+                <p class="vjs-no-js">
+                    Untuk menonton video ini, silakan 
+                    <a href="https://videojs.com/html5-video-support/" target="_blank">aktifkan JavaScript</a>, 
+                    dan pertimbangkan untuk upgrade ke 
+                    <a href="https://videojs.com/html5-video-support/" target="_blank">browser web yang mendukung HTML5 video</a>.
+                </p>
+            </video>
+        </div>
+        <div class="controls-panel">
+            <a href="#" class="control-btn" onclick="toggleFullscreen()">
+                <i class="fas fa-expand"></i>
+                Layar Penuh
+            </a>
+            <a href="#" class="control-btn" onclick="refreshStream()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh Stream
+            </a>
+            <a href="https://wa.me/628970400899" target="_blank" class="control-btn whatsapp-btn">
+                <i class="fab fa-whatsapp"></i>
+                Hubungi Support
+            </a>
+        </div>
+        <!-- Lineup Section -->
+        <div class="lineup-section">
+            <h3 class="lineup-title">
+                <i class="fas fa-users"></i>
+                Lineup Member
+            </h3>
+            <div class="lineup-members">
+                <span class="member-name">Christy</span>
+                <span class="member-name">Lia</span>
+                <span class="member-name">Cynthia</span>
+                <span class="member-name">Danella</span>
+                <span class="member-name">Daisy</span>
+                <span class="member-name">Olla</span>
+                <span class="member-name">Freya</span>
+                <span class="member-name">Gita</span>
+                <span class="member-name">Greesel</span>
+                <span class="member-name">Indah</span>
+                <span class="member-name">Indira</span>
+                <span class="member-name">Jessi</span>
+                <span class="member-name">Kathrina</span>
+                <span class="member-name">Lulu</span>
+                <span class="member-name">Marsha</span>
+                <span class="member-name">Michie</span>
+            </div>
+        </div>
+        <div class="footer-info">
+            <p><strong>JKT48 Official Backup Streaming</strong></p>
+            <p>Nikmati pertunjukan theater eksklusif dengan kualitas HD</p>
+            <p style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+                © 2024 JKT48 Premium Streaming. Semua hak dilindungi.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Access Control System
+        class AccessControl {
+            constructor() {
+                this.storageKey = 'jkt48_streaming_access';
+                this.sessionKey = 'jkt48_streaming_session';
+                this.userIP = null;
+                this.deviceFingerprint = null;
+            }
+
+            // Generate device fingerprint
+            async generateFingerprint() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('Device fingerprint', 2, 2);
+                
+                const fingerprint = {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    screen: `${screen.width}x${screen.height}x${screen.colorDepth}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    canvas: canvas.toDataURL(),
+                    webgl: this.getWebGLFingerprint(),
+                    timestamp: Date.now()
+                };
+
+                // Create hash from fingerprint
+                const fingerprintString = JSON.stringify(fingerprint);
+                const hash = await this.hashString(fingerprintString);
+                return hash.substring(0, 32); // Use first 32 characters
+            }
+
+            // Get WebGL fingerprint
+            getWebGLFingerprint() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    if (!gl) return 'no-webgl';
+                    
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    return debugInfo ? 
+                        gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 
+                        'webgl-available';
+                } catch (e) {
+                    return 'webgl-error';
+                }
+            }
+
+            // Hash string using Web Crypto API
+            async hashString(str) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(str);
+                const hash = await crypto.subtle.digest('SHA-256', data);
+                return Array.from(new Uint8Array(hash))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            }
+
+            // Get user IP address
+            async getUserIP() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    return data.ip;
+                } catch (error) {
+                    console.warn('Could not fetch IP:', error);
+                    // Fallback: use a combination of other identifiers
+                    return await this.hashString(navigator.userAgent + navigator.language + screen.width);
+                }
+            }
+
+            // Check if access is allowed
+            async checkAccess() {
+                this.userIP = await this.getUserIP();
+                this.deviceFingerprint = await this.generateFingerprint();
+
+                const storedAccess = localStorage.getItem(this.storageKey);
+                const currentSession = sessionStorage.getItem(this.sessionKey);
+
+                if (!storedAccess) {
+                    // First time access - allow and store
+                    return true;
+                }
+
+                try {
+                    const accessData = JSON.parse(storedAccess);
+                    const currentTime = Date.now();
+                    
+                    // Check if stored access is expired (24 hours)
+                    if (currentTime - accessData.timestamp > 24 * 60 * 60 * 1000) {
+                        localStorage.removeItem(this.storageKey);
+                        return true;
+                    }
+
+                    // Check if same device and IP
+                    if (accessData.fingerprint === this.deviceFingerprint && 
+                        accessData.ip === this.userIP) {
+                        return true;
+                    }
+
+                    // Check if there's an active session from same device
+                    if (currentSession && accessData.fingerprint === this.deviceFingerprint) {
+                        return true;
+                    }
+
+                    // Access denied - different device or IP
+                    this.showAccessDenied(accessData);
+                    return false;
+
+                } catch (error) {
+                    console.error('Error checking access:', error);
+                    localStorage.removeItem(this.storageKey);
+                    return true;
+                }
+            }
+
+            // Store access information
+            storeAccess() {
+                const accessData = {
+                    fingerprint: this.deviceFingerprint,
+                    ip: this.userIP,
+                    timestamp: Date.now(),
+                    userAgent: navigator.userAgent.substring(0, 100) // Store partial user agent
+                };
+
+                localStorage.setItem(this.storageKey, JSON.stringify(accessData));
+                sessionStorage.setItem(this.sessionKey, 'active');
+            }
+
+            // Show access denied message
+            showAccessDenied(storedData) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('streamingContainer').style.display = 'none';
+                document.getElementById('accessDeniedContainer').style.display = 'block';
+
+                // Show registered device info
+                const registeredInfo = `
+                    IP: ${storedData.ip}<br>
+                    Browser: ${storedData.userAgent}<br>
+                    Terdaftar: ${new Date(storedData.timestamp).toLocaleString('id-ID')}
+                `;
+                document.getElementById('registeredDeviceInfo').innerHTML = registeredInfo;
+            }
+
+            // Reset access (for admin use)
+            resetAccess() {
+                localStorage.removeItem(this.storageKey);
+                sessionStorage.removeItem(this.sessionKey);
+                location.reload();
+            }
+        }
+
+        // Initialize access control
+        const accessControl = new AccessControl();
+
+        // Create animated background
+        function createParticles() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                bgAnimation.appendChild(particle);
+            }
+        }
+
+        // Simple hash function for password verification
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const passwordInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Show loading
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+            loginBtn.disabled = true;
+            
+            // Simulate loading delay
+            setTimeout(async () => {
+                const enteredPassword = passwordInput.value;
+                const hashedPassword = await hashPassword(enteredPassword);
+                
+                // Valid password hashes
+                const validHashes = [
+                    '4bf4848e86e231df763a97cbf9a7c8df1788aef8fc46c93e282588d3b3a35e33', // pass
+                    '891094cb1dc2dc43c31d739f9edd78c8606843bd13c130c670a96606338a61a7', // pass
+                    'b6b4355bd3ced4d2730e6e3c1599fcbb67582921eea32a89ba9b4fc569a32410', // pass
+                    'b19df80bb1142ae243cb61f1abf01c03097ed3897b7e36cca14c07232fb57cc2'  // pass
+                ];
+                
+                if (validHashes.includes(hashedPassword)) {
+                    // Check access control
+                    const accessAllowed = await accessControl.checkAccess();
+                    
+                    if (accessAllowed) {
+                        // Store access and show streaming
+                        accessControl.storeAccess();
+                        document.getElementById('loginContainer').style.display = 'none';
+                        document.getElementById('streamingContainer').style.display = 'block';
+                        initializeVideoPlayer();
+                    }
+                    // If access denied, the checkAccess method will handle showing the denied message
+                } else {
+                    // Wrong password
+                    errorMessage.classList.add('show');
+                    passwordInput.style.borderColor = '#ff4757';
+                    passwordInput.value = '';
+                    
+                    // Reset error state after 3 seconds
+                    setTimeout(() => {
+                        errorMessage.classList.remove('show');
+                        passwordInput.style.borderColor = '#e1e5e9';
+                    }, 3000);
+                }
+                
+                // Hide loading
+                btnText.style.display = 'inline';
+                loadingSpinner.style.display = 'none';
+                loginBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Initialize video player
+        function initializeVideoPlayer() {
+            const player = videojs('video', {
+                fluid: true,
+                responsive: true,
+                playbackRates: [0.5, 1, 1.25, 1.5, 2],
+                controls: true,
+                preload: 'auto'
+            });
+
+            // Initialize HLS
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 90
+                });
+                hls.loadSource('https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a46405350597f574a&_=m3u8');
+                hls.attachMedia(player.tech().el());
+                
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    console.log('Stream loaded successfully');
+                });
+            }
+        }
+
+        // Utility functions
+        function toggleFullscreen() {
+            const player = videojs('video');
+            if (player.isFullscreen()) {
+                player.exitFullscreen();
+            } else {
+                player.requestFullscreen();
+            }
+        }
+
+        function refreshStream() {
+            const player = videojs('video');
+            player.src({
+                src: 'https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a46405350597f574a&_=m3u8&t=' + Date.now(),
+                type: 'application/x-mpegURL'
+            });
+            player.load();
+        }
+
+        // Check access on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            createParticles();
+            
+            // Check if user already has valid access
+            const hasValidAccess = await accessControl.checkAccess();
+            if (hasValidAccess) {
+                const storedAccess = localStorage.getItem(accessControl.storageKey);
+                if (storedAccess) {
+                    // User has valid stored access, skip login
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('streamingContainer').style.display = 'block';
+                    initializeVideoPlayer();
+                }
+            }
+        });
+
+        // Monitor for multiple tabs/windows
+        window.addEventListener('storage', function(e) {
+            if (e.key === accessControl.sessionKey && e.newValue !== e.oldValue) {
+                // Another tab/window is trying to access
+                if (document.getElementById('streamingContainer').style.display === 'block') {
+                    alert('Streaming telah dibuka di tab/window lain. Halaman ini akan ditutup.');
+                    window.close();
+                }
+            }
+        });
+
+        // Clear session on page unload
+        window.addEventListener('beforeunload', function() {
+            sessionStorage.removeItem(accessControl.sessionKey);
+        });
+
+        // Prevent right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Disable F12, Ctrl+Shift+I, Ctrl+U
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        // Admin function to reset access (can be called from console)
+        window.resetStreamingAccess = function() {
+            accessControl.resetAccess();
+        };
+    </script>
+</body>
+</html>
