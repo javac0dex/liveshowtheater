@@ -601,6 +601,83 @@
             font-weight: bold;
             color: #ff6b00;
         }
+
+        /* Session Recovery Modal */
+        .session-recovery-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .session-recovery-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .session-recovery-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .session-recovery-title {
+            color: #4ecdc4;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .session-recovery-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .recovery-btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .recovery-btn:hover {
+            background: linear-gradient(45deg, #44a08d, #3d8b7a);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -696,6 +773,23 @@
         </div>
     </div>
 
+    <!-- Session Recovery Modal -->
+    <div class="session-recovery-overlay" id="sessionRecoveryOverlay">
+        <div class="session-recovery-modal">
+            <div class="session-recovery-icon">
+                <i class="fas fa-sync-alt"></i>
+            </div>
+            <h1 class="session-recovery-title">Sesi Tersedia!</h1>
+            <p class="session-recovery-message">
+                Tab/window lain telah ditutup. Anda sekarang dapat melanjutkan streaming di sini.
+            </p>
+            <button class="recovery-btn" id="recoverSessionBtn">
+                <i class="fas fa-play"></i>
+                Lanjutkan Streaming
+            </button>
+        </div>
+    </div>
+
     <!-- Streaming Content -->
     <div class="streaming-container" id="streamingContainer">
         <div class="streaming-header">
@@ -778,19 +872,23 @@
     </div>
 
     <script>
-        // Access Control System with Multiple Session Detection
+        // Access Control System with Session Recovery
         class AccessControl {
             constructor() {
                 this.storageKey = 'jkt48_streaming_access';
                 this.sessionKey = 'jkt48_streaming_session';
                 this.heartbeatKey = 'jkt48_streaming_heartbeat';
                 this.activeSessionKey = 'jkt48_active_session';
+                this.waitingSessionKey = 'jkt48_waiting_session';
                 this.userIP = null;
                 this.deviceFingerprint = null;
                 this.sessionId = this.generateSessionId();
                 this.heartbeatInterval = null;
                 this.countdownInterval = null;
+                this.recoveryCheckInterval = null;
                 this.isStreamingActive = false;
+                this.isWaitingForRecovery = false;
+                this.hasValidCredentials = false;
             }
 
             // Generate unique session ID
@@ -885,6 +983,53 @@
                 localStorage.removeItem(this.heartbeatKey);
             }
 
+            // Start recovery monitoring for waiting sessions
+            startRecoveryMonitoring() {
+                this.recoveryCheckInterval = setInterval(() => {
+                    if (this.isWaitingForRecovery && this.hasValidCredentials) {
+                        const canRecover = this.checkSessionRecovery();
+                        if (canRecover) {
+                            this.showSessionRecovery();
+                        }
+                    }
+                }, 2000); // Check every 2 seconds
+            }
+
+            // Stop recovery monitoring
+            stopRecoveryMonitoring() {
+                if (this.recoveryCheckInterval) {
+                    clearInterval(this.recoveryCheckInterval);
+                    this.recoveryCheckInterval = null;
+                }
+            }
+
+            // Check if session can be recovered
+            checkSessionRecovery() {
+                const currentHeartbeat = localStorage.getItem(this.heartbeatKey);
+                
+                if (!currentHeartbeat) {
+                    // No active heartbeat, session can be recovered
+                    return true;
+                }
+
+                try {
+                    const heartbeatData = JSON.parse(currentHeartbeat);
+                    const timeDiff = Date.now() - heartbeatData.timestamp;
+                    
+                    // If heartbeat is old (more than 10 seconds), consider session dead
+                    if (timeDiff > 10000) {
+                        localStorage.removeItem(this.heartbeatKey);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Error checking session recovery:', error);
+                    localStorage.removeItem(this.heartbeatKey);
+                    return true;
+                }
+
+                return false;
+            }
+
             // Check for multiple sessions
             checkMultipleSessions() {
                 const currentHeartbeat = localStorage.getItem(this.heartbeatKey);
@@ -941,6 +1086,33 @@
                     clearInterval(this.countdownInterval);
                     this.countdownInterval = null;
                 }
+            }
+
+            // Show session recovery modal
+            showSessionRecovery() {
+                const overlay = document.getElementById('sessionRecoveryOverlay');
+                overlay.style.display = 'block';
+                this.stopRecoveryMonitoring();
+            }
+
+            // Hide session recovery modal
+            hideSessionRecovery() {
+                const overlay = document.getElementById('sessionRecoveryOverlay');
+                overlay.style.display = 'none';
+            }
+
+            // Recover session and start streaming
+            recoverSession() {
+                this.hideSessionRecovery();
+                this.isWaitingForRecovery = false;
+                
+                // Hide login and show streaming
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('streamingContainer').style.display = 'block';
+                
+                // Initialize video and start session
+                initializeVideoPlayer();
+                this.startStreamingSession();
             }
 
             // Force close other session
@@ -1022,6 +1194,19 @@
                 setTimeout(() => {
                     window.close();
                 }, 5000);
+            }
+
+            // Register waiting session
+            registerWaitingSession() {
+                const waitingData = {
+                    sessionId: this.sessionId,
+                    timestamp: Date.now(),
+                    fingerprint: this.deviceFingerprint,
+                    ip: this.userIP
+                };
+                localStorage.setItem(this.waitingSessionKey, JSON.stringify(waitingData));
+                this.isWaitingForRecovery = true;
+                this.startRecoveryMonitoring();
             }
 
             // Check if access is allowed
@@ -1110,12 +1295,33 @@
                 }, 3000);
             }
 
+            // Clean up on page unload
+            cleanup() {
+                this.stopHeartbeat();
+                this.stopRecoveryMonitoring();
+                
+                // If this was the active session, clear heartbeat
+                const currentHeartbeat = localStorage.getItem(this.heartbeatKey);
+                if (currentHeartbeat) {
+                    try {
+                        const heartbeatData = JSON.parse(currentHeartbeat);
+                        if (heartbeatData.sessionId === this.sessionId) {
+                            localStorage.removeItem(this.heartbeatKey);
+                        }
+                    } catch (error) {
+                        console.error('Error during cleanup:', error);
+                    }
+                }
+            }
+
             // Reset access (for admin use)
             resetAccess() {
                 localStorage.removeItem(this.storageKey);
                 localStorage.removeItem(this.heartbeatKey);
+                localStorage.removeItem(this.waitingSessionKey);
                 localStorage.removeItem('jkt48_force_close');
                 this.stopHeartbeat();
+                this.stopRecoveryMonitoring();
                 location.reload();
             }
         }
@@ -1178,18 +1384,28 @@
                 ];
         
                 if (validHashes.includes(hashedPassword)) {
+                    accessControl.hasValidCredentials = true;
+                    
                     // Check access control
                     const accessAllowed = await accessControl.checkAccess();
             
                     if (accessAllowed) {
-                        // Store access and show streaming
+                        // Store access
                         accessControl.storeAccess();
-                        document.getElementById('loginContainer').style.display = 'none';
-                        document.getElementById('streamingContainer').style.display = 'block';
-                        initializeVideoPlayer();
-                
-                        // Start streaming session monitoring
-                        accessControl.startStreamingSession();
+                        
+                        // Check if there's an active session
+                        const otherSession = accessControl.checkMultipleSessions();
+                        if (otherSession) {
+                            // Register as waiting session
+                            accessControl.registerWaitingSession();
+                            accessControl.showMultipleSessionWarning(otherSession);
+                        } else {
+                            // No other session, start streaming immediately
+                            document.getElementById('loginContainer').style.display = 'none';
+                            document.getElementById('streamingContainer').style.display = 'block';
+                            initializeVideoPlayer();
+                            accessControl.startStreamingSession();
+                        }
                     }
                 } else {
                     // Wrong password
@@ -1254,7 +1470,7 @@
             player.load();
         }
 
-        // Multiple session warning event handlers
+        // Event handlers
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
     
@@ -1266,10 +1482,16 @@
             // Stay here button
             document.getElementById('stayHereBtn').addEventListener('click', function() {
                 accessControl.hideMultipleSessionWarning();
+                accessControl.stopRecoveryMonitoring();
                 // This session will be closed by the other session
                 setTimeout(() => {
                     window.close();
                 }, 1000);
+            });
+
+            // Recover session button
+            document.getElementById('recoverSessionBtn').addEventListener('click', function() {
+                accessControl.recoverSession();
             });
         });
 
@@ -1283,9 +1505,30 @@
             }
         });
 
-        // Clear session on page unload
+        // Page visibility change handler
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Page is hidden, but don't stop heartbeat immediately
+                // This allows for quick tab switches
+            } else {
+                // Page is visible again
+                if (accessControl.isWaitingForRecovery && accessControl.hasValidCredentials) {
+                    const canRecover = accessControl.checkSessionRecovery();
+                    if (canRecover) {
+                        accessControl.showSessionRecovery();
+                    }
+                }
+            }
+        });
+
+        // Clean up on page unload
         window.addEventListener('beforeunload', function() {
-            accessControl.stopHeartbeat();
+            accessControl.cleanup();
+        });
+
+        // Also handle page hide (for mobile browsers)
+        window.addEventListener('pagehide', function() {
+            accessControl.cleanup();
         });
 
         // Prevent right-click context menu
