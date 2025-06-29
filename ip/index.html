@@ -49,145 +49,6 @@
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(180deg); }
         }
-        /* Login Container */
-        .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-            transform: translateY(0);
-            transition: all 0.3s ease;
-        }
-        .login-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: white;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .login-title {
-            color: #333;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .login-show-title {
-            color: #444;
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        .login-show-info {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-        .login-show-date {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .login-show-time {
-            font-size: 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .login-subtitle {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .input-field {
-            width: 100%;
-            padding: 15px 20px 15px 50px;
-            border: 2px solid #e1e5e9;
-            border-radius: 50px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
-            transform: scale(1.02);
-        }
-        .input-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            font-size: 18px;
-        }
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-        .login-btn:active {
-            transform: translateY(0);
-        }
-        .error-message {
-            color: #ff4757;
-            font-size: 14px;
-            margin-top: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .error-message.show {
-            opacity: 1;
-        }
         /* Access Denied Container */
         .access-denied-container {
             display: none;
@@ -434,12 +295,8 @@
                 padding: 15px 20px;
             }
             
-            .login-container, .access-denied-container {
+            .access-denied-container {
                 padding: 30px 20px;
-            }
-            
-            .login-show-date, .login-show-time {
-                font-size: 14px;
             }
             
             .controls-panel {
@@ -684,40 +541,6 @@
     <!-- Animated Background -->
     <div class="bg-animation" id="bgAnimation"></div>
     
-    <!-- Login Form -->
-    <div class="login-container" id="loginContainer">
-        <div class="logo">
-            <i class="fas fa-play"></i>
-        </div>
-        <h1 class="login-title">JKT48 Premium</h1>
-        <h2 class="login-show-title">Cara Meminum Ramune</h2>
-        
-        <div class="login-show-info">
-            <div class="login-show-date">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Minggu, 29 Jun 2025</span>
-            </div>
-            <div class="login-show-time">
-                <i class="fas fa-clock"></i>
-                <span>14:00 WIB</span>
-            </div>
-        </div>
-        
-        <p class="login-subtitle">Masukkan kata sandi untuk mengakses streaming eksklusif</p>
-        
-        <form id="loginForm">
-            <div class="input-group">
-                <i class="fas fa-lock input-icon"></i>
-                <input type="password" class="input-field" id="passwordInput" placeholder="Masukkan kata sandi" required>
-            </div>
-            <button type="submit" class="login-btn" id="loginBtn">
-                <span id="btnText">Masuk ke Streaming</span>
-                <span class="loading" id="loadingSpinner" style="display: none;"></span>
-            </button>
-            <div class="error-message" id="errorMessage">Kata sandi salah! Silakan coba lagi.</div>
-        </form>
-    </div>
-
     <!-- Access Denied Container -->
     <div class="access-denied-container" id="accessDeniedContainer">
         <div class="access-denied-icon">
@@ -815,3 +638,333 @@
                 autoplay 
                 data-setup='{"fluid": true, "responsive": true}'>
                 <source src="https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a
+        </video>
+        </div>
+        
+        <div class="controls-panel">
+            <a href="https://wa.me/628970400899" target="_blank" class="control-btn whatsapp-btn">
+                <i class="fab fa-whatsapp"></i>
+                Laporkan Masalah
+            </a>
+            <a href="#" class="control-btn">
+                <i class="fas fa-question-circle"></i>
+                Panduan
+            </a>
+            <a href="#" class="control-btn">
+                <i class="fas fa-cog"></i>
+                Pengaturan
+            </a>
+        </div>
+
+        <div class="lineup-section">
+            <h3 class="lineup-title">
+                <i class="fas fa-users"></i>
+                Lineup Show Hari Ini
+            </h3>
+            <p class="lineup-members">
+                <span class="member-name">Ashel</span>
+                <span class="member-name">Zee</span>
+                <span class="member-name">Freya</span>
+                <span class="member-name">Flora</span>
+                <span class="member-name">Indira</span>
+                <span class="member-name">Marsha</span>
+                <span class="member-name">Muthe</span>
+                <span class="member-name">Olla</span>
+                <span class="member-name">Oniel</span>
+                <span class="member-name">Fiony</span>
+                <span class="member-name">Greesel</span>
+                <span class="member-name">Lily</span>
+                <span class="member-name">Lulu</span>
+                <span class="member-name">Raisha</span>
+                <span class="member-name">Shani</span>
+                <span class="member-name">Callista</span>
+            </p>
+        </div>
+
+        <div class="footer-info">
+            &copy; 2024 JKT48 Premium Streaming. All rights reserved.
+            <br>
+            <a href="https://jkt48.com" target="_blank" style="color: #4ecdc4; text-decoration: none;">Visit JKT48 Official Website</a>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate random number
+        function getRandomNumber(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        // Function to create particles
+        function createParticles() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            const numberOfParticles = 30;
+
+            for (let i = 0; i < numberOfParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Random size for variety
+                const size = getRandomNumber(5, 15);
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                // Random position
+                particle.style.left = `${getRandomNumber(0, 100)}vw`;
+                particle.style.top = `${getRandomNumber(0, 100)}vh`;
+
+                // Random animation delay for staggered effect
+                particle.style.animationDelay = `${getRandomNumber(0, 5)}s`;
+
+                bgAnimation.appendChild(particle);
+            }
+        }
+
+        // Access Control Class
+        class AccessControl {
+            constructor() {
+                this.streamURL = 'https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a';
+                this.accessKey = 'premium_access';
+                this.hasValidCredentials = false;
+                this.isWaitingForRecovery = false;
+                this.sessionCheckInterval = null;
+                this.recoveryCheckInterval = null;
+                this.countdownInterval = null;
+                this.countdownSeconds = 10;
+            }
+
+            async checkAccess() {
+                return true;
+            }
+
+            storeAccess() {
+                localStorage.setItem(this.accessKey, 'true');
+            }
+
+            clearAccess() {
+                localStorage.removeItem(this.accessKey);
+            }
+
+            checkStoredAccess() {
+                return localStorage.getItem(this.accessKey) === 'true';
+            }
+
+            checkMultipleSessions() {
+                const sessionInfo = sessionStorage.getItem('activeSession');
+                return sessionInfo ? JSON.parse(sessionInfo) : null;
+            }
+
+            registerWaitingSession() {
+                this.showMultipleSessionWarning(this.checkMultipleSessions());
+                this.startCountdown();
+            }
+
+            startStreamingSession() {
+                const sessionData = {
+                    deviceId: this.generateDeviceId(),
+                    ipAddress: 'Unknown', // Anda bisa mencoba mendapatkan IP address di sini
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                };
+                sessionStorage.setItem('activeSession', JSON.stringify(sessionData));
+                this.startSessionMonitoring();
+            }
+
+            endStreamingSession() {
+                sessionStorage.removeItem('activeSession');
+                this.stopSessionMonitoring();
+            }
+
+            generateDeviceId() {
+                let deviceId = localStorage.getItem('deviceId');
+                if (!deviceId) {
+                    deviceId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                    localStorage.setItem('deviceId', deviceId);
+                }
+                return deviceId;
+            }
+
+            startSessionMonitoring() {
+                this.sessionCheckInterval = setInterval(() => {
+                    // Simulasi pengecekan sesi di server
+                    const sessionStillActive = true; // Ganti dengan logika sesuai kebutuhan
+                    if (!sessionStillActive) {
+                        this.clearAccess();
+                        this.endStreamingSession();
+                        this.showAccessDenied();
+                        clearInterval(this.sessionCheckInterval);
+                    }
+                }, 5000); // Cek setiap 5 detik
+            }
+
+            stopSessionMonitoring() {
+                clearInterval(this.sessionCheckInterval);
+            }
+
+            showAccessDenied() {
+                document.getElementById('streamingContainer').style.display = 'none';
+                document.getElementById('accessDeniedContainer').style.display = 'block';
+                // Tampilkan info perangkat jika tersedia
+                const sessionData = this.checkMultipleSessions();
+                if (sessionData) {
+                    const deviceInfo = `Device ID: ${sessionData.deviceId}, User Agent: ${sessionData.userAgent}, IP Address: ${sessionData.ipAddress}`;
+                    document.getElementById('registeredDeviceInfo').innerText = deviceInfo;
+                }
+            }
+
+            showMultipleSessionWarning(sessionInfo) {
+                const overlay = document.getElementById('sessionWarningOverlay');
+                overlay.style.display = 'block';
+
+                // Tampilkan info sesi yang aktif
+                const activeSessionInfo = `Device ID: ${sessionInfo.deviceId}, User Agent: ${sessionInfo.userAgent}, IP Address: ${sessionInfo.ipAddress}`;
+                document.getElementById('activeSessionInfo').innerText = activeSessionInfo;
+            }
+
+            hideMultipleSessionWarning() {
+                const overlay = document.getElementById('sessionWarningOverlay');
+                overlay.style.display = 'none';
+            }
+
+            transferAccess() {
+                // Simulasi transfer akses
+                this.endStreamingSession();
+                sessionStorage.removeItem('activeSession');
+                this.hideMultipleSessionWarning();
+                this.startRecoveryMonitoring();
+                this.showSessionRecovery();
+            }
+
+            startRecoveryMonitoring() {
+                this.isWaitingForRecovery = true;
+                this.recoveryCheckInterval = setInterval(() => {
+                    // Simulasi pengecekan apakah sesi lama sudah berakhir
+                    const oldSessionEnded = !sessionStorage.getItem('activeSession');
+                    if (oldSessionEnded) {
+                        clearInterval(this.recoveryCheckInterval);
+                        this.isWaitingForRecovery = false;
+                        this.showSessionRecovery();
+                    }
+                }, 3000); // Cek setiap 3 detik
+            }
+
+            stopRecoveryMonitoring() {
+                clearInterval(this.recoveryCheckInterval);
+                this.isWaitingForRecovery = false;
+            }
+
+            showSessionRecovery() {
+                const overlay = document.getElementById('sessionRecoveryOverlay');
+                overlay.style.display = 'block';
+            }
+
+            hideSessionRecovery() {
+                const overlay = document.getElementById('sessionRecoveryOverlay');
+                overlay.style.display = 'none';
+            }
+
+            recoverSession() {
+                this.hideSessionRecovery();
+                this.isWaitingForRecovery = false;
+                
+                // Langsung show streaming tanpa hide login
+                document.getElementById('streamingContainer').style.display = 'block';
+                
+                initializeVideoPlayer();
+                this.startStreamingSession();
+            }
+
+            startCountdown() {
+                let seconds = this.countdownSeconds;
+                const countdownDisplay = document.getElementById('countdown');
+
+                this.countdownInterval = setInterval(() => {
+                    seconds--;
+                    countdownDisplay.innerText = seconds;
+
+                    if (seconds <= 0) {
+                        clearInterval(this.countdownInterval);
+                        if (document.getElementById('sessionWarningOverlay').style.display === 'block') {
+                            this.transferAccess();
+                        }
+                    }
+                }, 1000);
+            }
+
+            stopCountdown() {
+                clearInterval(this.countdownInterval);
+            }
+        }
+
+        // Initialize Video Player
+        function initializeVideoPlayer() {
+            const player = videojs('video', {
+                controls: true,
+                autoplay: true,
+                preload: 'auto',
+                fluid: true,
+                responsive: true
+            });
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(accessControl.streamURL);
+                hls.attachMedia(player.el());
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    player.play();
+                });
+            } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+                player.src({
+                    src: accessControl.streamURL,
+                    type: 'application/vnd.apple.mpegurl'
+                });
+            } else {
+                console.error('HLS is not supported in this browser.');
+            }
+        }
+
+        const accessControl = new AccessControl();
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            createParticles();
+            
+            // Langsung check access tanpa login
+            accessControl.hasValidCredentials = true;
+            const accessAllowed = await accessControl.checkAccess();
+            
+            if (accessAllowed) {
+                accessControl.storeAccess();
+                
+                const otherSession = accessControl.checkMultipleSessions();
+                if (otherSession) {
+                    accessControl.registerWaitingSession();
+                    accessControl.showMultipleSessionWarning(otherSession);
+                } else {
+                    document.getElementById('streamingContainer').style.display = 'block';
+                    initializeVideoPlayer();
+                    accessControl.startStreamingSession();
+                }
+            }
+            
+            // Event handlers tetap sama
+            document.getElementById('transferAccessBtn').addEventListener('click', function() {
+                accessControl.transferAccess();
+            });
+
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                accessControl.hideMultipleSessionWarning();
+                accessControl.stopRecoveryMonitoring();
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
+            });
+
+            document.getElementById('recoverSessionBtn').addEventListener('click', function() {
+                accessControl.recoverSession();
+            });
+        });
+    </script>
+</body>
+</html>
