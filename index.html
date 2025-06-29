@@ -19,7 +19,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -30,7 +29,6 @@
             position: relative;
             overflow-x: hidden;
         }
-
         /* Animated background particles */
         .bg-animation {
             position: fixed;
@@ -41,19 +39,16 @@
             z-index: -1;
             opacity: 0.1;
         }
-
         .particle {
             position: absolute;
             background: white;
             border-radius: 50%;
             animation: float 6s ease-in-out infinite;
         }
-
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(180deg); }
         }
-
         /* Login Container */
         .login-container {
             background: rgba(255, 255, 255, 0.95);
@@ -67,12 +62,10 @@
             transform: translateY(0);
             transition: all 0.3s ease;
         }
-
         .login-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
-
         .logo {
             width: 80px;
             height: 80px;
@@ -86,13 +79,11 @@
             color: white;
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-
         .login-title {
             color: #333;
             font-size: 28px;
@@ -103,14 +94,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .login-show-title {
             color: #444;
             font-size: 22px;
             font-weight: 600;
             margin-bottom: 15px;
         }
-
         .login-show-info {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
@@ -119,7 +108,6 @@
             margin-bottom: 25px;
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
-
         .login-show-date {
             font-size: 16px;
             font-weight: 600;
@@ -129,7 +117,6 @@
             justify-content: center;
             gap: 8px;
         }
-
         .login-show-time {
             font-size: 16px;
             font-weight: 600;
@@ -138,18 +125,15 @@
             justify-content: center;
             gap: 8px;
         }
-
         .login-subtitle {
             color: #666;
             font-size: 16px;
             margin-bottom: 30px;
         }
-
         .input-group {
             position: relative;
             margin-bottom: 20px;
         }
-
         .input-field {
             width: 100%;
             padding: 15px 20px 15px 50px;
@@ -159,14 +143,12 @@
             transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.9);
         }
-
         .input-field:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
             transform: scale(1.02);
         }
-
         .input-icon {
             position: absolute;
             left: 18px;
@@ -175,7 +157,6 @@
             color: #667eea;
             font-size: 18px;
         }
-
         .login-btn {
             width: 100%;
             padding: 15px;
@@ -190,16 +171,13 @@
             position: relative;
             overflow: hidden;
         }
-
         .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
-
         .login-btn:active {
             transform: translateY(0);
         }
-
         .error-message {
             color: #ff4757;
             font-size: 14px;
@@ -207,11 +185,9 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .error-message.show {
             opacity: 1;
         }
-
         /* Streaming Container */
         .streaming-container {
             display: none;
@@ -220,7 +196,6 @@
             margin: 20px;
             animation: fadeInUp 0.8s ease;
         }
-
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -231,12 +206,10 @@
                 transform: translateY(0);
             }
         }
-
         .streaming-header {
             text-align: center;
             margin-bottom: 30px;
         }
-
         .streaming-title {
             font-size: 42px;
             font-weight: 800;
@@ -247,7 +220,6 @@
             margin-bottom: 15px;
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         .show-title {
             font-size: 28px;
             font-weight: 700;
@@ -255,7 +227,6 @@
             margin-bottom: 8px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-
         .show-datetime {
             font-size: 20px;
             color: #4ecdc4;
@@ -273,13 +244,11 @@
             max-width: fit-content;
             margin: 0 auto 20px;
         }
-
         .streaming-subtitle {
             color: rgba(255, 255, 255, 0.8);
             font-size: 18px;
             font-weight: 300;
         }
-
         .video-wrapper {
             position: relative;
             background: rgba(0, 0, 0, 0.9);
@@ -288,7 +257,6 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             margin-bottom: 30px;
         }
-
         .video-wrapper::before {
             content: '';
             position: absolute;
@@ -301,19 +269,16 @@
             z-index: -1;
             animation: borderGlow 3s linear infinite;
         }
-
         @keyframes borderGlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         #video {
             width: 100%;
             height: auto;
             min-height: 400px;
         }
-
         .controls-panel {
             display: flex;
             justify-content: center;
@@ -321,7 +286,6 @@
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
-
         .control-btn {
             padding: 12px 24px;
             background: rgba(255, 255, 255, 0.1);
@@ -336,28 +300,23 @@
             align-items: center;
             gap: 8px;
         }
-
         .control-btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-
         .whatsapp-btn {
             background: linear-gradient(45deg, #25D366, #128C7E);
         }
-
         .whatsapp-btn:hover {
             background: linear-gradient(45deg, #128C7E, #075E54);
         }
-
         .status-indicator {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 15px;
         }
-
         .status-dot {
             width: 12px;
             height: 12px;
@@ -365,7 +324,6 @@
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
-
         /* Lineup Section */
         .lineup-section {
             background: rgba(255, 255, 255, 0.1);
@@ -376,7 +334,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-align: center;
         }
-
         .lineup-title {
             color: #4ecdc4;
             font-size: 22px;
@@ -387,14 +344,12 @@
             justify-content: center;
             gap: 10px;
         }
-
         .lineup-members {
             color: rgba(255, 255, 255, 0.9);
             font-size: 16px;
             line-height: 1.6;
             font-weight: 500;
         }
-
         .member-name {
             display: inline-block;
             background: rgba(255, 255, 255, 0.1);
@@ -404,12 +359,10 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
         }
-
         .member-name:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
         }
-
         .footer-info {
             text-align: center;
             color: rgba(255, 255, 255, 0.7);
@@ -420,7 +373,6 @@
             border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .streaming-title {
@@ -455,18 +407,15 @@
                 width: 200px;
                 justify-content: center;
             }
-
             .lineup-members {
                 font-size: 14px;
             }
-
             .member-name {
                 font-size: 13px;
                 padding: 4px 8px;
                 margin: 2px;
             }
         }
-
         /* Loading Animation */
         .loading {
             display: inline-block;
@@ -477,7 +426,6 @@
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -486,7 +434,6 @@
 <body>
     <!-- Animated Background -->
     <div class="bg-animation" id="bgAnimation"></div>
-
     <!-- Login Form -->
     <div class="login-container" id="loginContainer">
         <div class="logo">
@@ -520,7 +467,6 @@
             <div class="error-message" id="errorMessage">Kata sandi salah! Silakan coba lagi.</div>
         </form>
     </div>
-
     <!-- Streaming Content -->
     <div class="streaming-container" id="streamingContainer">
         <div class="streaming-header">
@@ -538,7 +484,6 @@
                 <span>Live Streaming Aktif</span>
             </div>
         </div>
-
         <div class="video-wrapper">
             <video 
                 id="video" 
@@ -555,7 +500,6 @@
                 </p>
             </video>
         </div>
-
         <div class="controls-panel">
             <a href="#" class="control-btn" onclick="toggleFullscreen()">
                 <i class="fas fa-expand"></i>
@@ -570,7 +514,6 @@
                 Hubungi Support
             </a>
         </div>
-
         <!-- Lineup Section -->
         <div class="lineup-section">
             <h3 class="lineup-title">
@@ -596,7 +539,6 @@
                 <span class="member-name">Michie</span>
             </div>
         </div>
-
         <div class="footer-info">
             <p><strong>JKT48 Official Backup Streaming</strong></p>
             <p>Nikmati pertunjukan theater eksklusif dengan kualitas HD</p>
@@ -605,7 +547,6 @@
             </p>
         </div>
     </div>
-
     <script>
         // Create animated background
         function createParticles() {
@@ -622,7 +563,6 @@
                 bgAnimation.appendChild(particle);
             }
         }
-
         // Simple hash function for password verification
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -632,7 +572,6 @@
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('');
         }
-
         // Login form handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -653,8 +592,8 @@
                 const enteredPassword = passwordInput.value;
                 const hashedPassword = await hashPassword(enteredPassword);
                 
-                // Check password (comparing with hash of "password")
-                const correctHash = '2c70e12b7a0646f92279f427c7b38e7334d8e5389cff167a1dc30e73f826b683';
+                // Check password (comparing with hash of "flora123")
+                const correctHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
                 
                 if (hashedPassword === correctHash) {
                     // Correct password
@@ -680,7 +619,6 @@
                 loginBtn.disabled = false;
             }, 1500);
         });
-
         // Initialize video player
         function initializeVideoPlayer() {
             const player = videojs('video', {
@@ -690,7 +628,6 @@
                 controls: true,
                 preload: 'auto'
             });
-
             // Initialize HLS
             if (Hls.isSupported()) {
                 const hls = new Hls({
@@ -706,7 +643,6 @@
                 });
             }
         }
-
         // Utility functions
         function toggleFullscreen() {
             const player = videojs('video');
@@ -716,7 +652,6 @@
                 player.requestFullscreen();
             }
         }
-
         function refreshStream() {
             const player = videojs('video');
             player.src({
@@ -725,17 +660,14 @@
             });
             player.load();
         }
-
         // Initialize particles on page load
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
         });
-
         // Prevent right-click context menu
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
-
         // Disable F12, Ctrl+Shift+I, Ctrl+U
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F12' || 
