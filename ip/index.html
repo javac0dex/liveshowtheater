@@ -535,6 +535,147 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
         }
+
+        /* Waiting for Previous Session Modal */
+        .waiting-session-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .waiting-session-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .waiting-session-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ffa500, #ff8c00);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .waiting-session-title {
+            color: #ff8c00;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .waiting-session-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .waiting-status {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #ffa500;
+        }
+
+        .waiting-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ffa500;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .waiting-status p {
+            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .waiting-instruction {
+            color: #888 !important;
+            font-size: 14px !important;
+            font-weight: 400 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .waiting-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .waiting-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .waiting-btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .waiting-btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .waiting-btn-support {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .waiting-btn-support:hover {
+            background: linear-gradient(45deg, #128C7E, #075E54);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -613,6 +754,42 @@
         </div>
     </div>
 
+    <!-- Waiting for Previous Session Modal -->
+    <div class="waiting-session-overlay" id="waitingSessionOverlay">
+        <div class="waiting-session-modal">
+            <div class="waiting-session-icon">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <h1 class="waiting-session-title">Menunggu Sesi Sebelumnya</h1>
+            <p class="waiting-session-message">
+                Streaming sedang aktif di perangkat lain. Untuk melanjutkan di perangkat ini, 
+                <strong>silakan tutup/keluar dari web streaming di perangkat sebelumnya terlebih dahulu</strong>.
+            </p>
+            <div class="session-info" id="waitingSessionInfo">
+                <strong>Sesi Aktif Saat Ini:</strong><br>
+                <span id="currentActiveSessionInfo"></span>
+            </div>
+            <div class="waiting-status">
+                <div class="waiting-spinner"></div>
+                <p>Menunggu perangkat lain untuk keluar...</p>
+                <p class="waiting-instruction">
+                    <i class="fas fa-info-circle"></i>
+                    Tutup tab/browser di perangkat lain, kemudian halaman ini akan otomatis melanjutkan.
+                </p>
+            </div>
+            <div class="waiting-buttons">
+                <button class="waiting-btn waiting-btn-secondary" id="refreshWaitingBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Periksa Ulang
+                </button>
+                <a href="https://wa.me/628970400899" target="_blank" class="waiting-btn waiting-btn-support">
+                    <i class="fab fa-whatsapp"></i>
+                    Bantuan
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Streaming Content -->
     <div class="streaming-container" id="streamingContainer">
         <div class="streaming-header">
@@ -637,7 +814,7 @@
                 controls 
                 autoplay 
                 data-setup='{"fluid": true, "responsive": true}'>
-                <source src="https://aps11.playlist.live-video.net/v1/playlist/CsgFdgXVq6QeC1nypGewYHrGzUtf-X-JfRuIVOTt4RHP1UHqsWXtZ_WnQQoH5-uHwAI4afUGW132K7yXWrAKnhhTTtvhR9fecvaT1zk1iS1MmwNG2nLIiATq0ughSPDcgDcSUxILZwxwdpDeBP2ROt3VaYVpdlwifN1hfu7srpEkYgcxPpRgM4NthLMzmrPCGArcULInFcdq1cG_yqe4HxhP_lY48cSv8OQCRavlaJja6HbLbFXbQhdEdhKNZZU8UD8e5c8CzXMSMVS4uvxB77wxDPXDIAJuXuJr5hjdGtLVSMeKjbxmzuon6oUos9o_lsrp2bl3o6mC5HZpcxiWuPSFCHiFecQMs38i5fc-wjcqCJdW2TuxBLAmjzGqcfu2p8H0ovlAWEMhDbOqG6c87ciY4sVlMU3_ON77bPsLSIk1sH-QDuJJvFG1bDUkQo2VXLaiKaDuLKuB_JblHFilR1zj8M6vRToXHrNCDx7zjr23i53jfYyHxKL1LYAKnZ2S6wvfVDSQDRC6waeD5hgzMYuzTF6Qse_KNfKvyQFNGIoc2zHkRIq1VtbaD6JoWtwrM4ep3c3AtV5aiyi5S5SGo0BdSbfflS3D5wdHOwGEfYUlSVmQzKWxXCmTJ808FRbs7c52esZejGkTS44ZUODMOMe2SsfO1YI5ovq3agK5vTrm3XAP7wf_XHinsOjFgBVv9ETMlba2IjmVcPS1heUDqxDV-in6lU9bOUCW54_94jmGU2EnwNGzaUQ2NuZgHzEM1ZNn-1J-ae-8VbpoA9lki72rgdI0Qhvd7KxHgJsrf0uniSWXQOD_w_5e0HpGTGBG3wjdUZGmAvGJBkaVywqFcoxNA7YBXC-TuGM03Szwuge_JVrZ2x80iA0_v5aCuXjpF6buTSBHJaDbIgJS4avf37xewcIOFJG3E3enX85X1OdD1yUPTkGektj-bhoMoPrtR0iUfwia56QBIAEqCXVzLXdlc3QtMjDQDA.m3u8
+                <source src="https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a
         </video>
         </div>
         
@@ -722,7 +899,7 @@
         // Access Control Class
         class AccessControl {
             constructor() {
-                this.streamURL = 'https://aps11.playlist.live-video.net/v1/playlist/CsgFdgXVq6QeC1nypGewYHrGzUtf-X-JfRuIVOTt4RHP1UHqsWXtZ_WnQQoH5-uHwAI4afUGW132K7yXWrAKnhhTTtvhR9fecvaT1zk1iS1MmwNG2nLIiATq0ughSPDcgDcSUxILZwxwdpDeBP2ROt3VaYVpdlwifN1hfu7srpEkYgcxPpRgM4NthLMzmrPCGArcULInFcdq1cG_yqe4HxhP_lY48cSv8OQCRavlaJja6HbLbFXbQhdEdhKNZZU8UD8e5c8CzXMSMVS4uvxB77wxDPXDIAJuXuJr5hjdGtLVSMeKjbxmzuon6oUos9o_lsrp2bl3o6mC5HZpcxiWuPSFCHiFecQMs38i5fc-wjcqCJdW2TuxBLAmjzGqcfu2p8H0ovlAWEMhDbOqG6c87ciY4sVlMU3_ON77bPsLSIk1sH-QDuJJvFG1bDUkQo2VXLaiKaDuLKuB_JblHFilR1zj8M6vRToXHrNCDx7zjr23i53jfYyHxKL1LYAKnZ2S6wvfVDSQDRC6waeD5hgzMYuzTF6Qse_KNfKvyQFNGIoc2zHkRIq1VtbaD6JoWtwrM4ep3c3AtV5aiyi5S5SGo0BdSbfflS3D5wdHOwGEfYUlSVmQzKWxXCmTJ808FRbs7c52esZejGkTS44ZUODMOMe2SsfO1YI5ovq3agK5vTrm3XAP7wf_XHinsOjFgBVv9ETMlba2IjmVcPS1heUDqxDV-in6lU9bOUCW54_94jmGU2EnwNGzaUQ2NuZgHzEM1ZNn-1J-ae-8VbpoA9lki72rgdI0Qhvd7KxHgJsrf0uniSWXQOD_w_5e0HpGTGBG3wjdUZGmAvGJBkaVywqFcoxNA7YBXC-TuGM03Szwuge_JVrZ2x80iA0_v5aCuXjpF6buTSBHJaDbIgJS4avf37xewcIOFJG3E3enX85X1OdD1yUPTkGektj-bhoMoPrtR0iUfwia56QBIAEqCXVzLXdlc3QtMjDQDA.m3u8';
+                this.streamURL = 'https://be.manekingidol.my.id/stream_url.m3u8?id=36171d16233015004f02001927481f0b370602011f4c130a2b101f0b775d5559444c535b74505f5c6f5f5a';
                 this.accessKey = 'premium_access';
                 this.hasValidCredentials = false;
                 this.isWaitingForRecovery = false;
@@ -730,14 +907,65 @@
                 this.recoveryCheckInterval = null;
                 this.countdownInterval = null;
                 this.countdownSeconds = 10;
+                this.storageKey = 'jkt48_premium_access';
+                this.heartbeatKey = 'jkt48_premium_heartbeat';
+                this.userIP = null;
+                this.deviceFingerprint = null;
+                this.waitingCheckInterval = null;
             }
 
             async checkAccess() {
-                return true;
+                this.userIP = await this.getUserIP();
+                this.deviceFingerprint = await this.generateFingerprint();
+
+                const storedAccess = localStorage.getItem(this.storageKey);
+
+                if (!storedAccess) {
+                    return true;
+                }
+
+                try {
+                    const accessData = JSON.parse(storedAccess);
+                    const currentTime = Date.now();
+
+                    // Check if stored access is expired (24 hours)
+                    if (currentTime - accessData.timestamp > 24 * 60 * 60 * 1000) {
+                        localStorage.removeItem(this.storageKey);
+                        return true;
+                    }
+
+                    // Check if same device and IP
+                    if (accessData.fingerprint === this.deviceFingerprint && 
+                        accessData.ip === this.userIP) {
+                        return true;
+                    }
+
+                    // Different IP/device - check if there's active session
+                    const activeSession = this.checkMultipleSessions();
+                    if (activeSession) {
+                        // Show waiting modal instead of access denied
+                        this.showWaitingForPreviousSession(activeSession);
+                        return false;
+                    }
+
+                    // No active session but different device - show access denied
+                    this.showAccessDenied(accessData);
+                    return false;
+
+                } catch (error) {
+                    console.error('Error checking access:', error);
+                    localStorage.removeItem(this.storageKey);
+                    return true;
+                }
             }
 
             storeAccess() {
-                localStorage.setItem(this.accessKey, 'true');
+                const accessData = {
+                    ip: this.userIP,
+                    fingerprint: this.deviceFingerprint,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(this.storageKey, JSON.stringify(accessData));
             }
 
             clearAccess() {
@@ -761,17 +989,19 @@
             startStreamingSession() {
                 const sessionData = {
                     deviceId: this.generateDeviceId(),
-                    ipAddress: 'Unknown', // Anda bisa mencoba mendapatkan IP address di sini
+                    ip: this.userIP,
                     userAgent: navigator.userAgent,
                     timestamp: new Date().toISOString()
                 };
                 sessionStorage.setItem('activeSession', JSON.stringify(sessionData));
                 this.startSessionMonitoring();
+                this.startHeartbeat();
             }
 
             endStreamingSession() {
                 sessionStorage.removeItem('activeSession');
                 this.stopSessionMonitoring();
+                this.stopHeartbeat();
             }
 
             generateDeviceId() {
@@ -784,6 +1014,27 @@
                     localStorage.setItem('deviceId', deviceId);
                 }
                 return deviceId;
+            }
+
+            async generateFingerprint() {
+                return new Promise((resolve) => {
+                    Fingerprint2.get(function (components) {
+                        const values = components.map(function (component) { return component.value });
+                        const murmur = Fingerprint2.x64hash128(values.join(''), 31);
+                        resolve(murmur);
+                    })
+                });
+            }
+
+            async getUserIP() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    return data.ip;
+                } catch (error) {
+                    console.error('Error getting IP address:', error);
+                    return 'Unknown';
+                }
             }
 
             startSessionMonitoring() {
@@ -803,13 +1054,12 @@
                 clearInterval(this.sessionCheckInterval);
             }
 
-            showAccessDenied() {
+            showAccessDenied(accessData) {
                 document.getElementById('streamingContainer').style.display = 'none';
                 document.getElementById('accessDeniedContainer').style.display = 'block';
                 // Tampilkan info perangkat jika tersedia
-                const sessionData = this.checkMultipleSessions();
-                if (sessionData) {
-                    const deviceInfo = `Device ID: ${sessionData.deviceId}, User Agent: ${sessionData.userAgent}, IP Address: ${sessionData.ipAddress}`;
+                if (accessData) {
+                    const deviceInfo = `IP: ${accessData.ip}, Fingerprint: ${accessData.fingerprint}`;
                     document.getElementById('registeredDeviceInfo').innerText = deviceInfo;
                 }
             }
@@ -896,6 +1146,83 @@
             stopCountdown() {
                 clearInterval(this.countdownInterval);
             }
+
+            showWaitingForPreviousSession(activeSession) {
+                const overlay = document.getElementById('waitingSessionOverlay');
+                const activeSessionInfo = document.getElementById('currentActiveSessionInfo');
+                
+                // Show active session info
+                activeSessionInfo.innerHTML = `
+                    IP: ${activeSession.ip || 'Unknown'}<br>
+                    Browser: ${activeSession.userAgent ? activeSession.userAgent.substring(0, 50) + '...' : 'Unknown'}<br>
+                    Waktu Aktif: ${new Date(activeSession.timestamp).toLocaleString('id-ID')}
+                `;
+                
+                overlay.style.display = 'block';
+                this.startWaitingMonitoring();
+            }
+
+            hideWaitingForPreviousSession() {
+                const overlay = document.getElementById('waitingSessionOverlay');
+                overlay.style.display = 'none';
+                this.stopWaitingMonitoring();
+            }
+
+            startWaitingMonitoring() {
+                this.waitingCheckInterval = setInterval(() => {
+                    const canAccess = this.checkIfPreviousSessionClosed();
+                    if (canAccess) {
+                        this.hideWaitingForPreviousSession();
+                        this.showSessionRecovery();
+                    }
+                }, 3000); // Check every 3 seconds
+            }
+
+            stopWaitingMonitoring() {
+                if (this.waitingCheckInterval) {
+                    clearInterval(this.waitingCheckInterval);
+                    this.waitingCheckInterval = null;
+                }
+            }
+
+            checkIfPreviousSessionClosed() {
+                const currentHeartbeat = localStorage.getItem(this.heartbeatKey);
+                
+                if (!currentHeartbeat) {
+                    return true; // No active heartbeat, can access
+                }
+
+                try {
+                    const heartbeatData = JSON.parse(currentHeartbeat);
+                    const timeDiff = Date.now() - heartbeatData.timestamp;
+                    
+                    // If heartbeat is old (more than 8 seconds), consider session closed
+                    if (timeDiff > 8000) {
+                        localStorage.removeItem(this.heartbeatKey);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Error checking previous session:', error);
+                    localStorage.removeItem(this.heartbeatKey);
+                    return true;
+                }
+
+                return false;
+            }
+
+            startHeartbeat() {
+                this.heartbeatInterval = setInterval(() => {
+                    const heartbeatData = {
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(this.heartbeatKey, JSON.stringify(heartbeatData));
+                }, 5000); // Send heartbeat every 5 seconds
+            }
+
+            stopHeartbeat() {
+                clearInterval(this.heartbeatInterval);
+                localStorage.removeItem(this.heartbeatKey);
+            }
         }
 
         // Initialize Video Player
@@ -939,13 +1266,15 @@
                 
                 const otherSession = accessControl.checkMultipleSessions();
                 if (otherSession) {
-                    accessControl.registerWaitingSession();
-                    accessControl.showMultipleSessionWarning(otherSession);
+                    // Show waiting modal instead of transfer modal
+                    accessControl.showWaitingForPreviousSession(otherSession);
                 } else {
                     document.getElementById('streamingContainer').style.display = 'block';
                     initializeVideoPlayer();
                     accessControl.startStreamingSession();
                 }
+            } else {
+                // Access not allowed - modal already shown in checkAccess
             }
             
             // Event handlers tetap sama
@@ -964,7 +1293,44 @@
             document.getElementById('recoverSessionBtn').addEventListener('click', function() {
                 accessControl.recoverSession();
             });
+
+            // Tambahkan event handler untuk refresh waiting button
+            document.getElementById('refreshWaitingBtn').addEventListener('click', function() {
+                const canAccess = accessControl.checkIfPreviousSessionClosed();
+                if (canAccess) {
+                    accessControl.hideWaitingForPreviousSession();
+                    accessControl.showSessionRecovery();
+                } else {
+                    // Show brief feedback
+                    const btn = this;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Memeriksa...';
+                    btn.disabled = true;
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                }
+            });
         });
+
+        // Initialize Fingerprint2
+        (function () {
+            if (window.requestIdleCallback) {
+                requestIdleCallback(function () {
+                    Fingerprint2.get(function (components) {
+                        //console.log(components) // an array of FP components
+                    })
+                })
+            } else {
+                setTimeout(function () {
+                    Fingerprint2.get(function (components) {
+                        //console.log(components) // an array of FP components
+                    })
+                }, 500)
+            }
+        })();
     </script>
 </body>
 </html>
