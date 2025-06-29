@@ -209,8 +209,34 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .show-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .show-datetime {
+            font-size: 20px;
+            color: #4ecdc4;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: fit-content;
+            margin: 0 auto 20px;
         }
 
         .streaming-subtitle {
@@ -290,17 +316,6 @@
             background: linear-gradient(45deg, #128C7E, #075E54);
         }
 
-        .footer-info {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
         .status-indicator {
             display: inline-flex;
             align-items: center;
@@ -316,10 +331,76 @@
             animation: pulse 2s infinite;
         }
 
+        /* Lineup Section */
+        .lineup-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .lineup-title {
+            color: #4ecdc4;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .lineup-members {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .member-name {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            margin: 4px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .member-name:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .footer-info {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .streaming-title {
                 font-size: 28px;
+            }
+            
+            .show-title {
+                font-size: 22px;
+            }
+            
+            .show-datetime {
+                font-size: 16px;
+                flex-direction: column;
+                gap: 5px;
+                padding: 15px 20px;
             }
             
             .login-container {
@@ -334,6 +415,16 @@
             .control-btn {
                 width: 200px;
                 justify-content: center;
+            }
+
+            .lineup-members {
+                font-size: 14px;
+            }
+
+            .member-name {
+                font-size: 13px;
+                padding: 4px 8px;
+                margin: 2px;
             }
         }
 
@@ -382,6 +473,13 @@
     <div class="streaming-container" id="streamingContainer">
         <div class="streaming-header">
             <h1 class="streaming-title">JKT48 LIVE STREAMING</h1>
+            <h2 class="show-title">Cara Meminum Ramune</h2>
+            <div class="show-datetime">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Minggu, 29 Jun 2025</span>
+                <i class="fas fa-clock"></i>
+                <span>14:00 WIB</span>
+            </div>
             <p class="streaming-subtitle">Theater Show Backup Streaming - Premium Access</p>
             <div class="status-indicator">
                 <div class="status-dot"></div>
@@ -419,6 +517,32 @@
                 <i class="fab fa-whatsapp"></i>
                 Hubungi Support
             </a>
+        </div>
+
+        <!-- Lineup Section -->
+        <div class="lineup-section">
+            <h3 class="lineup-title">
+                <i class="fas fa-users"></i>
+                Lineup Member
+            </h3>
+            <div class="lineup-members">
+                <span class="member-name">Christy</span>
+                <span class="member-name">Lia</span>
+                <span class="member-name">Cynthia</span>
+                <span class="member-name">Danella</span>
+                <span class="member-name">Daisy</span>
+                <span class="member-name">Olla</span>
+                <span class="member-name">Freya</span>
+                <span class="member-name">Gita</span>
+                <span class="member-name">Greesel</span>
+                <span class="member-name">Indah</span>
+                <span class="member-name">Indira</span>
+                <span class="member-name">Jessi</span>
+                <span class="member-name">Kathrina</span>
+                <span class="member-name">Lulu</span>
+                <span class="member-name">Marsha</span>
+                <span class="member-name">Michie</span>
+            </div>
         </div>
 
         <div class="footer-info">
