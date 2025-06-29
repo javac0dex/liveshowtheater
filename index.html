@@ -62,7 +62,7 @@
             padding: 40px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 400px;
+            max-width: 450px;
             width: 90%;
             transform: translateY(0);
             transition: all 0.3s ease;
@@ -102,6 +102,41 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .login-show-title {
+            color: #444;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .login-show-info {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-show-date {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-show-time {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .login-subtitle {
@@ -407,6 +442,10 @@
                 padding: 30px 20px;
             }
             
+            .login-show-date, .login-show-time {
+                font-size: 14px;
+            }
+            
             .controls-panel {
                 flex-direction: column;
                 align-items: center;
@@ -454,6 +493,19 @@
             <i class="fas fa-play"></i>
         </div>
         <h1 class="login-title">JKT48 Premium</h1>
+        <h2 class="login-show-title">Cara Meminum Ramune</h2>
+        
+        <div class="login-show-info">
+            <div class="login-show-date">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Minggu, 29 Jun 2025</span>
+            </div>
+            <div class="login-show-time">
+                <i class="fas fa-clock"></i>
+                <span>14:00 WIB</span>
+            </div>
+        </div>
+        
         <p class="login-subtitle">Masukkan kata sandi untuk mengakses streaming eksklusif</p>
         
         <form id="loginForm">
@@ -555,10 +607,6 @@
     </div>
 
     <script>
-        // Obfuscated password hash (SHA-256 of "krepes123")
-        const _0x4a2b = ['c8e1c9e7f1a2b3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8'];
-        const _0x1f3e = () => _0x4a2b[0];
-        
         // Create animated background
         function createParticles() {
             const bgAnimation = document.getElementById('bgAnimation');
@@ -605,8 +653,8 @@
                 const enteredPassword = passwordInput.value;
                 const hashedPassword = await hashPassword(enteredPassword);
                 
-                // Check password (comparing with hash of "krepes123")
-                const correctHash = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
+                // Check password (comparing with hash of "fpi123")
+                const correctHash = '2c70e12b7a0646f92279f427c7b38e7334d8e5389cff167a1dc30e73f826b683';
                 
                 if (hashedPassword === correctHash) {
                     // Correct password
